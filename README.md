@@ -1,130 +1,92 @@
 # Phase 3 Project Guidelines
 
-## Learning Goals
+# Sinatra API
 
-- Build a web basic API with Sinatra and Active Record to support a React
-  frontend
+This is a Sinatra-based API that provides various endpoints for user and article management. It allows users to sign up, log in, create articles, add comments, and interact with likes.
 
-## Introduction
+## Prerequisites
 
-Congrats on getting through all the material for Phase 3! Now's the time to put
-it all together and build something from scratch to reinforce what you know and
-expand your horizons.
-
-The focus of this project is **building a Sinatra API backend** that uses
-**Active Record** to access and persist data in a database, which will be used
-by a separate **React frontend** that interacts with the database via the API.
-
-## Requirements
-
-For this project, you must:
-
-- Use Active Record to interact with a database.
-- Have at least two models with a one-to-many relationship.
-- At a minimum, set up the following API routes in Sinatra:
-  - create and read actions for both models
-  - full CRUD capability for one of the models: 
-  The update action should be implemented using a form that is 
-  pre-filled with existing values for the object. On submission of 
-  the form, the object should update. Note: Using a like button or 
-  similar will not meet the update requirement.
-- Build a separate React frontend application that interacts with the API to
-  perform CRUD actions.
-- Implement proper front end state management. You should be updating state using a
-  setState function after receiving your response from a POST, PATCH, or DELETE 
-  request. You should NOT be relying on a GET request to update state. 
-- Use good OO design patterns. You should have separate classes for each of your
-  models, and create instance and class methods as necessary. 
-- Routes in your application (both client side and back end) should follow RESTful
-  conventions.
-- Use your back end optimally. Pass JSON for related associations to the front 
-  end from the back end. You should use active record methods in your controller to grab
-  the needed data from your database and provide as JSON to the front end. You
-  should NOT be relying on filtering front end state or a separate fetch request to
-  retrieve related data.
-
-For example, build a todo list application with a React frontend interface and a
-Sinatra backend API, where a user can:
-
-- **Create** a new todo
-- **Read** a list of all todos
-- **Update** an individual todo
-- **Delete** a todo
-
-A `Todo` can be tagged with a `Category`, so that each todo _belongs to_ a
-category and each category _has many_ todos.
+- Ruby
+- Sinatra
+- ActiveRecord
+- Bcrypt
 
 ## Getting Started
 
-### Backend Setup
+1. Clone the repository:
 
-This repository has all the starter code needed to get a Sinatra backend up and
-running. [**Fork and clone**][fork link] this repository to get started. Then, run
-`bundle install` to install the gems.
+   ```bash
+   git clone <repository-url>
+  ````
+2. Install dependencies:
+  `bundle install`
 
-**Important**: Be sure you fork a copy of the repo into your GitHub account
-before cloning it. You can do this by using the link above or by clicking the
-"Octocat" button at the top of this page, then clicking "Fork" in the upper
-right corner of the repo page.
+3. start the application's development server
+ `bundle exec rackup config.ru`
 
-[fork link]: https://github.com/learn-co-curriculum/phase-3-sinatra-react-project/fork
+# Endpoints
+## Home
+`GET /`
+Description: Returns a welcome message.
+Response Body: `{ "message": "Good luck with your project!" }`
 
-The `app/controllers/application_controller.rb` file has an example GET route
-handler. Replace this route with routes for your project.
+## Users
+`POST /signup`
 
-You can start your server with:
+Description: Creates a new user account.
+Request Body: `{ "first_name": "John", "last_name": "Doe", "user_name": "johndoe", "email": "john@example.com", "password": "password" }`
 
-```console
-$ bundle exec rake server
-```
+`POST /login`
 
-This will run your server on port
-[http://localhost:9292](http://localhost:9292).
+Description: Authenticates the user and starts a session.
+Request Body: `{ "user_name": "johndoe", "password": "password" }`
 
-### Frontend Setup
+`GET /users`
 
-Your backend and your frontend should be in **two different repositories**.
+Description: Retrieves all users.
+`GET /users/:id`
 
-Create a new repository in a **separate folder** with a React app for your
-frontend. To do this, `cd` out of the backend project directory, and use
-[create-react-app][] to generate the necessary code for your React frontend:
+Description: Retrieves a specific user by ID.
+`DELETE /users/:id`
 
-```console
-$ npx create-react-app my-app-frontend
-```
+Description: Deletes a specific user by ID.
 
-After creating the project locally, you should also
-[create a repository on GitHub][create repo] to host your repo and help
-collaborate, if you're working with a partner.
+## Articles
+`GET /articles`
 
-### Fetch Example
+Description: Retrieves all articles with associated comments and users.
+`GET /articles/:id`
 
-Your React app should make fetch requests to your Sinatra backend! Here's an
-example:
+Description: Retrieves a specific article by ID with associated comments and users.
+`POST /articles`
 
-```js
-fetch("http://localhost:9292/test")
-  .then((r) => r.json())
-  .then((data) => console.log(data));
-```
+Description: Creates a new article.
+Request Body: `{ "title": "Sample Article", "content": "This is a sample article." }`
+`PUT /articles/:id`
 
-## Project Tips
+Description: Updates a specific article by ID.
+Request Body: `{ "title": "Updated Article", "content": "This is an updated article." }`
+`GET /articles/:article_id/comments`
 
-- This project is intended to focus more on the backend than the frontend, so
-  try and keep the React side of things relatively simple. Focus on working with
-  Active Record and performing CRUD actions. What are some interesting queries you can write? What kinds of questions can you ask of your data?
-- Once you have a project idea, come up with a domain model and decide what
-  relationships exist between the models in your application. Use a tool like
-  [dbdiagram.io][] to help visualize your models.
-- Decide on your API endpoints. What data should they return? What kind of CRUD
-  action should they perform? What data do they need from the client?
-- Use [Postman][postman download] to test your endpoints.
-- Use `binding.pry` to debug your requests on the server. It's very helpful to use a
-  `binding.pry` in your controller within a route to see what `params` are being
-  sent.
-- Use the [Network Tab in the Dev Tools][network tab] in the frontend to debug
-  your requests.
+Description: Retrieves all comments for a specific article.
+`POST /articles/:article_id/comments`
 
+Description: Adds a new comment to a specific article.
+Request Body: `{ "user_id": 1, "comments": "This is a comment." }`
+`DELETE /articles/:article_id/comments/:comment_id`
+
+Description: Deletes a specific comment from a specific article.
+`GET /articles/:article_id/like`
+
+Description: Retrieves all likes for a specific article.
+
+## Likes
+`POST /articles/:article_id/like`
+
+Description: Adds a like to a specific article.
+`POST /articles/:article_id/dislike`
+
+Description: Adds a dislike to a specific article.
 ## Resources
 
 - [create-react-app][]

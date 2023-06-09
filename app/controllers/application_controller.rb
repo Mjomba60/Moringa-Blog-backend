@@ -131,6 +131,27 @@ get '/articles/:article_id/comments' do
   comments.to_json
 end
 
+get '/articles/:article_id/like' do
+  article_id = params[:article_id]
+  likes = Like.where(article_id: article_id)
+  likes.to_json
+end
+
+post '/articles/:article_id/like' do
+  article_id = params[:article_id]
+  user_id = params[:user_id]
+  interaction_type = params[:interaction_type] # Should be either 'like' or 'dislike'
+
+  like = Like.new(article_id: article_id, user_id: user_id, interaction_type: interaction_type)
+
+  if like.save
+    like.to_json
+  else
+    status 500
+    { error: 'Error saving like' }.to_json
+  end
+end
+
 post '/articles/:article_id/comments' do
   article_id = params[:article_id]
   user_id = params[:user_id]
